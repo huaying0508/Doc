@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+        "http://struts.apache.org/dtds/struts-2.1.7.dtd">
+<struts>
+
+
+    <!--	ajax登录-->
+    <package name="test" namespace="/test" extends="json-default">
+
+        <action name="login" class="com.soft.web.AdmLoginAction">
+            <result name="rejson" type="json">
+                <param name="root">remap</param>
+            </result>
+
+            <!--               检测用户名-->
+            <result name="checkN" type="json">
+                <param name="root">recheck</param>
+            </result>
+
+        </action>
+    </package>
+
+    <!--增删改查-->
+    <package name="user" namespace="/user" extends="struts-default,json-default">
+
+        <interceptors>
+            <interceptor name="LoginInterce" class="com.soft.interceptor.LoginInterceptor"></interceptor>
+            <interceptor-stack name="myStack">
+                <interceptor-ref name="LoginInterce"></interceptor-ref>
+                <interceptor-ref name="defaultStack"></interceptor-ref>
+            </interceptor-stack>
+        </interceptors>
+        <default-interceptor-ref name="myStack"></default-interceptor-ref>
+        <global-results>
+            <result name="error">/admin/login.jsp</result>
+        </global-results>
+
+
+        <!--增加-->
+        <action name="UserM" class="com.soft.web.UserListAction">
+            <result name="findok">/admin/findUser.jsp</result>
+            <result name="fail">/admin/error.jsp</result>
+
+            <result name="addu" type="json">
+                <param name="root">addmap</param>
+            </result>
+            <interceptor-ref name="defaultStack">
+                <param name="fileUpload.maximumSize">10240000</param>
+                <param name="fileUpload.allowedTypes">text/plain,image/jpeg,image/png</param>
+                <param name="fileUpload.allowedExtensions">.txt,.jpg,.jpeg,.png</param>
+            </interceptor-ref>
+        </action>
+    </package>
+
+
+    <!--    验证码-->
+    <package name="Security" namespace="/Security" extends="struts-default">
+        <action name="SecurityCodeImageAction"
+                class="com.soft.web.SecurityCodeImageAction">
+            <result name="success" type="stream">
+                <param name="contentType">image/jpeg</param>
+                <param name="inputName">imageStream</param>
+                <param name="bufferSize">2048</param>
+            </result>
+        </action>
+    </package>
+
+
+</struts>
